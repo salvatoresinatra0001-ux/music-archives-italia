@@ -1,5 +1,4 @@
 name: Distribuisci Music Archives Italia
-
 on:
   workflow_dispatch:
   push:
@@ -7,17 +6,22 @@ on:
     paths:
       - 'music-archives-italia-v13.1-GITHUB-PAGES-REPOSITORY-PRONTO.zip'
       - 'heartagram-italia/**'
+      - 'assets/**'
+      - 'index.html'
+      - 'mylene-farmer-italia/**'
+      - 'assemblage23-italia/**'
+      - 'mesh-italia/**'
+      - 'sandra-music-italia/**'
+      - 'thebirthdaymassacre-italia/**'
+      - 'ville-valo-him-heartagram-italia/**'
       - '.github/workflows/deploy-pages.yml'
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: true
-
 jobs:
   deploy:
     runs-on: ubuntu-24.04
@@ -27,96 +31,49 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
-      - name: Estrai e verifica i sei siti
+      - name: Unpack historical archive
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          from zipfile import ZipFile, BadZipFile
-          import sys
-          archive = Path('music-archives-italia-v13.1-GITHUB-PAGES-REPOSITORY-PRONTO.zip')
-          if not archive.is_file():
-              print('Archivio assente: caricare il file ZIP v13.1 nella radice del repository.')
-              sys.exit(1)
-          expected = [
-              'mylene-farmer-italia', 'assemblage23-italia',
-              'mesh-italia', 'sandra-music-italia',
-              'thebirthdaymassacre-italia', 'ville-valo-him-heartagram-italia'
-          ]
-          output = Path('_site')
-          output.mkdir(exist_ok=True)
+          from zipfile import ZipFile
+          archive=Path('music-archives-italia-v13.1-GITHUB-PAGES-REPOSITORY-PRONTO.zip')
+          site=Path('_site'); site.mkdir(exist_ok=True)
           with ZipFile(archive) as z:
-              if z.testzip() is not None:
-                  raise ValueError('Archivio ZIP corrotto.')
-              names = set(z.namelist())
-              required = ['index.html'] + [f'{name}/index.html' for name in expected]
-              missing = [p for p in required if p not in names]
-              if missing:
-                  raise ValueError(f'File essenziali mancanti: {missing}')
-              count = 0
-              for info in z.infolist():
-                  path = Path(info.filename)
-                  if info.is_dir() or path.is_absolute() or '..' in path.parts:
-                      continue
-                  if 'storico' in path.parts or path.suffix.lower() == '.zip':
-                      continue
-                  destination = output.joinpath(path)
-                  destination.parent.mkdir(parents=True, exist_ok=True)
-                  destination.write_bytes(z.read(info))
-                  count += 1
-          print(f'Preparati {count} file. Sei sezioni presenti.')
+              if z.testzip(): raise ValueError('Corrupted ZIP')
+              for item in z.infolist():
+                  path=Path(item.filename)
+                  if item.is_dir() or path.is_absolute() or '..' in path.parts or 'storico' in path.parts or path.suffix.lower()=='.zip': continue
+                  dest=site/path
+                  dest.parent.mkdir(parents=True,exist_ok=True)
+                  dest.write_bytes(z.read(item))
           PY
-
-      - name: Integra Heartagram Italia v1.1 senza sostituire l'archivio precedente
+      - name: Overlay the editable editorial sites
         shell: bash
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
           import shutil
-
-          source = Path('heartagram-italia')
-          target = Path('_site/heartagram-italia')
-          if not (source / 'index.html').is_file():
-              raise FileNotFoundError('Pagina Heartagram Italia mancante')
-          shutil.copytree(source, target, dirs_exist_ok=True,
-                          ignore=shutil.ignore_patterns('.github', 'README.md'))
-
-          previous = Path('_site/ville-valo-him-heartagram-italia/index.html')
-          if previous.exists():
-              doc = previous.read_text(encoding='utf-8')
-              marker = '<!-- HEARTAGRAM_ITALIA_V11 -->'
-              if marker not in doc:
-                  banner = (
-                      marker +
-                      '<aside role="note" style="position:relative;z-index:1000;'
-                      'background:#19131b;color:#fff;padding:14px 22px;'
-                      'text-align:center;font:600 14px/1.5 sans-serif;'
-                      'border-bottom:1px solid #c08caa">'
-                      'Heartagram Italia: disponibile una nuova edizione indipendente. '
-                      '<a style="color:#ffd3e8;text-decoration:underline" '
-                      'href="../heartagram-italia/">Visita la versione 1.1 su GitHub Pages</a>'
-                      '</aside>'
-                  )
-                  if re.search(r'<body\b[^>]*>', doc, flags=re.I):
-                      doc = re.sub(r'<body\b[^>]*>',
-                                   lambda m: m.group(0) + banner,
-                                   doc, count=1, flags=re.I)
-                  else:
-                      doc = banner + doc
-                  previous.write_text(doc, encoding='utf-8')
-          print('Heartagram Italia v1.1 integrato; sei archivi originali preservati.')
+          site=Path('_site')
+          folders=['assets','heartagram-italia','mylene-farmer-italia','assemblage23-italia','mesh-italia','sandra-music-italia','thebirthdaymassacre-italia','ville-valo-him-heartagram-italia']
+          shutil.copy2('index.html',site/'index.html')
+          for folder in folders:
+              if Path(folder).exists(): shutil.copytree(folder,site/folder,dirs_exist_ok=True,ignore=shutil.ignore_patterns('.github','README.md','*.zip'))
+          required=['index.html','assets/editorial.css']
+          for folder in folders:
+              if folder!='assets': required.append(folder+'/index.html')
+              if folder not in ('assets','heartagram-italia'): required.extend([folder+'/profilo.html',folder+'/discografia.html'])
+          missing=[p for p in required if not (site/p).is_file()]
+          if missing: raise ValueError(f'Missing files: {missing}')
+          (site/'.nojekyll').touch()
+          print(f'Validated {len(required)} site files')
           PY
-
-      - name: Configura GitHub Pages
+      - name: Configure Pages
         uses: actions/configure-pages@v6
-
-      - name: Carica artefatto
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
           path: _site
-
-      - name: Pubblica GitHub Pages
+      - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
