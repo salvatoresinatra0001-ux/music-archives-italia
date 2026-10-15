@@ -80,7 +80,8 @@ jobs:
           target = Path('_site/heartagram-italia')
           if not (source / 'index.html').is_file():
               raise FileNotFoundError('Pagina Heartagram Italia mancante')
-          shutil.copytree(source, target, dirs_exist_ok=True)
+          shutil.copytree(source, target, dirs_exist_ok=True,
+                          ignore=shutil.ignore_patterns('.github', 'README.md'))
 
           previous = Path('_site/ville-valo-him-heartagram-italia/index.html')
           if previous.exists():
