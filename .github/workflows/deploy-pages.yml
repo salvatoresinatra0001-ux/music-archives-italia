@@ -1,0 +1,80 @@
+name: Distribuisci Music Archives Italia
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'music-archives-italia-v13.1-GITHUB-PAGES-REPOSITORY-PRONTO.zip'
+      - '.github/workflows/deploy-pages.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Estrai e verifica i sei siti
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, BadZipFile
+          import sys
+          archive = Path('music-archives-italia-v13.1-GITHUB-PAGES-REPOSITORY-PRONTO.zip')
+          if not archive.is_file():
+              print('Archivio assente: caricare il file ZIP v13.1 nella radice del repository.')
+              sys.exit(1)
+          expected = [
+              'mylene-farmer-italia', 'assemblage23-italia',
+              'mesh-italia', 'sandra-music-italia',
+              'thebirthdaymassacre-italia', 'ville-valo-him-heartagram-italia'
+          ]
+          output = Path('_site')
+          output.mkdir(exist_ok=True)
+          with ZipFile(archive) as z:
+              if z.testzip() is not None:
+                  raise ValueError('Archivio ZIP corrotto.')
+              names = set(z.namelist())
+              required = ['index.html'] + [f'{name}/index.html' for name in expected]
+              missing = [p for p in required if p not in names]
+              if missing:
+                  raise ValueError(f'File essenziali mancanti: {missing}')
+              count = 0
+              for info in z.infolist():
+                  path = Path(info.filename)
+                  if info.is_dir() or path.is_absolute() or '..' in path.parts:
+                      continue
+                  if 'storico' in path.parts or path.suffix.lower() == '.zip':
+                      continue
+                  destination = output.joinpath(path)
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  destination.write_bytes(z.read(info))
+                  count += 1
+          print(f'Preparati {count} file. Sei sezioni presenti.')
+          PY
+
+      - name: Configura GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Carica artefatto
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Pubblica GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
