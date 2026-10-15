@@ -62,7 +62,7 @@ jobs:
           required=['index.html','assets/editorial.css']
           for folder in folders:
               if folder!='assets': required.append(folder+'/index.html')
-              if folder not in ('assets','heartagram-italia'): required.extend([folder+'/profilo.html',folder+'/discografia.html'])
+              if folder not in ('assets','heartagram-italia'): required.extend([folder+'/profilo.html',folder+'/discografia.html',folder+'/ricerca.html'])
           missing=[p for p in required if not (site/p).is_file()]
           if missing: raise ValueError(f'Missing files: {missing}')
           (site/'.nojekyll').touch()
