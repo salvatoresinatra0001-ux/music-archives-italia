@@ -9,9 +9,24 @@ Portale editoriale in lingua italiana, a cura di Salvatore Sinatra, dedicato a s
 5. The Birthday Massacre
 6. Ville Valo / HIM / VV / Heartagram
 
+## Heartagram Italia v1.1 — edizione aggiuntiva (15 ottobre 2026)
+
+La sezione **Ville Valo / HIM / Heartagram** dell'archivio v13.1 rimane intatta.
+
+In aggiunta, il workflow GitHub Pages integra un adattamento statico della homepage **Heartagram Italia v1.1**, sulla base dei contenuti recuperati dal progetto Sites:
+
+- Pagina nuova GitHub Pages: https://salvatoresinatra0001-ux.github.io/music-archives-italia/heartagram-italia/
+- Sezione preesistente preservata: https://salvatoresinatra0001-ux.github.io/music-archives-italia/ville-valo-him-heartagram-italia/
+- Sito Sites integrale di riferimento: https://heartagram-italia-v11.free-trail-0346.chatgpt.site/
+- Sorgenti adattamento/istruzioni per futura repository autonoma: [heartagram-italia/](heartagram-italia/)
+
+Il workflow aggiunge anche un collegamento alla nuova edizione dentro la pagina storica. La nuova pagina non è un'esportazione esatta e completa del progetto Sites: immagini, sottopagine e funzioni non disponibili come codice sorgente **non sono state replicate**.
+
+**Repository autonoma prevista:** "salvatoresinatra0001-ux/heartagram-italia". I file necessari sono già predisposti nella sottocartella sopra; la nuova repository deve ancora essere creata e configurata manualmente.
+
 ## Stato
 
-**Repository pubblico predisposto per GitHub Pages.** La pubblicazione dei siti è prevista a partire dai pacchetti locali `v13.1.0`. Il sito non deve essere considerato pubblicato fino al completamento del caricamento dell'archivio e di un deployment GitHub Pages riuscito.
+**GitHub Pages attivo.** Il deployment del pacchetto v13.1.0 è risultato riuscito il 15 ottobre 2026. La nuova edizione Heartagram v1.1 viene pubblicata dal workflow aggiornato; verificare la relativa esecuzione dopo le modifiche.
 
 ## Modalità consigliata di distribuzione
 
