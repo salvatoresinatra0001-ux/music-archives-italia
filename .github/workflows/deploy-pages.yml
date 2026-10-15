@@ -7,6 +7,8 @@ on:
       - 'music-archives-italia-v13.1-GITHUB-PAGES-REPOSITORY-PRONTO.zip'
       - 'heartagram-italia/**'
       - 'assets/**'
+      - 'data/**'
+      - 'scripts/**'
       - 'index.html'
       - 'mylene-farmer-italia/**'
       - 'assemblage23-italia/**'
@@ -68,6 +70,8 @@ jobs:
           (site/'.nojekyll').touch()
           print(f'Validated {len(required)} site files')
           PY
+      - name: Validate structured archive and generate catalog pages
+        run: python3 scripts/build_archive.py --output _site
       - name: Configure Pages
         uses: actions/configure-pages@v6
       - name: Upload artifact

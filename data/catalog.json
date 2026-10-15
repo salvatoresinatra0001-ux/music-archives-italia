@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "editor": "Salvatore Sinatra",
+  "editorial_status": "curated-not-comprehensive",
+  "artists": [
+    {
+      "id": "mylene-farmer-italia",
+      "name": "Mylène Farmer",
+      "path": "mylene-farmer-italia",
+      "release_records": [],
+      "source_records": [],
+      "review_status": "pending-source-verification"
+    },
+    {
+      "id": "assemblage23-italia",
+      "name": "Assemblage 23",
+      "path": "assemblage23-italia",
+      "release_records": [],
+      "source_records": [],
+      "review_status": "pending-source-verification"
+    },
+    {
+      "id": "mesh-italia",
+      "name": "Mesh",
+      "path": "mesh-italia",
+      "release_records": [],
+      "source_records": [],
+      "review_status": "pending-source-verification"
+    },
+    {
+      "id": "sandra-music-italia",
+      "name": "Sandra",
+      "path": "sandra-music-italia",
+      "release_records": [],
+      "source_records": [],
+      "review_status": "pending-source-verification"
+    },
+    {
+      "id": "thebirthdaymassacre-italia",
+      "name": "The Birthday Massacre",
+      "path": "thebirthdaymassacre-italia",
+      "release_records": [],
+      "source_records": [],
+      "review_status": "pending-source-verification"
+    },
+    {
+      "id": "ville-valo-him-heartagram-italia",
+      "name": "Ville Valo / HIM / VV",
+      "path": "ville-valo-him-heartagram-italia",
+      "release_records": [],
+      "source_records": [],
+      "review_status": "pending-source-verification"
+    }
+  ]
+}
