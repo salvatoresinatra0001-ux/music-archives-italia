@@ -1,0 +1,88 @@
+{
+  "version": "20.0",
+  "editor": "Salvatore Sinatra",
+  "generated": "2026-10-16",
+  "notice": "Independent editorial hub; directories verified in repository default branch. Linked media may have unverified reuse rights.",
+  "projects": [
+    {
+      "id": "him",
+      "name": "HIM · Ville Valo · VV",
+      "portal_directory": "ville-valo-him-heartagram-italia",
+      "independent_repository": "heartagram-italia",
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    },
+    {
+      "id": "mylene",
+      "name": "Mylène Farmer",
+      "portal_directory": "mylene-farmer-italia",
+      "independent_repository": "mylenefarmer-italia",
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    },
+    {
+      "id": "sandra",
+      "name": "Sandra",
+      "portal_directory": "sandra-music-italia",
+      "independent_repository": "sandra-italia",
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    },
+    {
+      "id": "mesh",
+      "name": "Mesh",
+      "portal_directory": "mesh-italia",
+      "independent_repository": "mesh-italia",
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    },
+    {
+      "id": "a23",
+      "name": "Assemblage 23",
+      "portal_directory": "assemblage23-italia",
+      "independent_repository": "assemblage23-italia",
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    },
+    {
+      "id": "tbm",
+      "name": "The Birthday Massacre",
+      "portal_directory": "thebirthdaymassacre-italia",
+      "independent_repository": "the-birthday-massacre-italia",
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    },
+    {
+      "id": "felix",
+      "name": "Felix Marc",
+      "portal_directory": "felix-marc-italia",
+      "independent_repository": null,
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    },
+    {
+      "id": "chrom",
+      "name": "CHROM",
+      "portal_directory": "chrom-italia",
+      "independent_repository": null,
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    },
+    {
+      "id": "dance",
+      "name": "The Last Dance",
+      "portal_directory": "the-last-dance-italia",
+      "independent_repository": null,
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    },
+    {
+      "id": "rammstein",
+      "name": "Rammstein",
+      "portal_directory": "rammstein-italia",
+      "independent_repository": "rammstein-italia",
+      "asset_migration_permitted": false,
+      "review_status": "editorial-review-required"
+    }
+  ]
+}
