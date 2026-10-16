@@ -63,11 +63,11 @@ jobs:
           from pathlib import Path
           import shutil
           site=Path('_site')
-          folders=['archivi','assets','atlante','heartagram-italia','mylene-farmer-italia','assemblage23-italia','mesh-italia','sandra-music-italia','thebirthdaymassacre-italia','ville-valo-him-heartagram-italia','felix-marc-italia','chrom-italia','the-last-dance-italia','rammstein-italia']
+          folders=['archivi','assets','data','atlante','heartagram-italia','mylene-farmer-italia','assemblage23-italia','mesh-italia','sandra-music-italia','thebirthdaymassacre-italia','ville-valo-him-heartagram-italia','felix-marc-italia','chrom-italia','the-last-dance-italia','rammstein-italia']
           shutil.copy2('index.html',site/'index.html')
           for folder in folders:
               if Path(folder).exists(): shutil.copytree(folder,site/folder,dirs_exist_ok=True,ignore=shutil.ignore_patterns('.github','README.md','*.zip'))
-          required=['index.html','assets/editorial.css','archivi/index.html','atlante/index.html']
+          required=['index.html','assets/editorial.css','archivi/index.html','atlante/index.html','data/catalog.json','data/ecosistema-v20.json']
           required.extend(str(p) for p in Path('archivi').glob('*/index.html'))
           for folder in folders:
               if folder not in ('assets','archivi'): required.append(folder+'/index.html')
