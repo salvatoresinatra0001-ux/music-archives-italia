@@ -90,7 +90,7 @@ def main():
                      ("index.html", "profilo.html", "discografia.html", "singoli.html",
                       "collaborazioni.html", "ricerca.html", "catalogo.html"))
     pages.append("heartagram-italia/index.html")
-    pages.extend(["atlante/index.html", "felix-marc-italia/index.html",
+    pages.extend(["atlante/index.html", "archivi/index.html", "felix-marc-italia/index.html",
                   "chrom-italia/index.html", "the-last-dance-italia/index.html",
                   "rammstein-italia/index.html",
                   "felix-marc-italia/discografia-e-streaming.html",
