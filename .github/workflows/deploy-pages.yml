@@ -16,6 +16,7 @@ on:
       - 'chrom-italia/**'
       - 'the-last-dance-italia/**'
       - 'rammstein-italia/**'
+      - 'rammstein-archivio-sonoro/**'
       - 'mylene-farmer-italia/**'
       - 'assemblage23-italia/**'
       - 'mesh-italia/**'
