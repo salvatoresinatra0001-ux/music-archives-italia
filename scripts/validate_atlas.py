@@ -52,6 +52,12 @@ def main():
         missing.extend(f"{path}: {msg}" for msg in check_links(ROOT / path))
     home = (ROOT / "index.html").read_text(encoding="utf-8")
     assert 'href="atlante/"' in home, "Homepage has no atlas navigation"
+    app = (ROOT / "assets/site.js").read_text(encoding="utf-8")
+    styles = (ROOT / "assets/editorial.css").read_text(encoding="utf-8")
+    assert "assets/site.js" in home, "Homepage has no shared interactions"
+    assert "../assets/site.js" in (ROOT / "atlante/index.html").read_text(encoding="utf-8"), "Atlas has no shared interactions"
+    assert "mai-theme" in app and "archive-search" in app and "metaKey" in app, "Shared interactions are incomplete"
+    assert 'data-theme="light"' in styles and "prefers-reduced-motion" in styles, "Theme or motion accessibility styles are missing"
     atlas = (ROOT / "atlante/index.html").read_text(encoding="utf-8")
     assert atlas.count('class="artist-card"') == ARTISTS
     workflow = (ROOT / ".github/workflows/deploy-pages.yml").read_text(encoding="utf-8")
