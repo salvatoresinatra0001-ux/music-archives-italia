@@ -1,0 +1,39 @@
+{
+  "artist": "Rammstein",
+  "scope": "studio-albums",
+  "chronology": "first-release-year",
+  "albums": [
+    {
+      "year": 1995,
+      "title": "Herzeleid"
+    },
+    {
+      "year": 1997,
+      "title": "Sehnsucht"
+    },
+    {
+      "year": 2001,
+      "title": "Mutter"
+    },
+    {
+      "year": 2004,
+      "title": "Reise, Reise"
+    },
+    {
+      "year": 2005,
+      "title": "Rosenrot"
+    },
+    {
+      "year": 2009,
+      "title": "Liebe ist für alle da"
+    },
+    {
+      "year": 2019,
+      "title": "Rammstein"
+    },
+    {
+      "year": 2022,
+      "title": "Zeit"
+    }
+  ]
+}

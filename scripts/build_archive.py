@@ -92,7 +92,7 @@ def main():
     pages.append("heartagram-italia/index.html")
     pages.extend(["atlante/index.html", "felix-marc-italia/index.html",
                   "chrom-italia/index.html", "the-last-dance-italia/index.html",
-                  "rammstein-italia/index.html",
+                  "rammstein-italia/index.html",\n                  "rammstein-archivio-sonoro/index.html",\n                  "rammstein-archivio-sonoro/discografia.html",\n                  "rammstein-archivio-sonoro/fonti.html",
                   "felix-marc-italia/discografia-e-streaming.html",
                   "chrom-italia/discografia-e-streaming.html",
                   "the-last-dance-italia/discografia-e-streaming.html"])
@@ -103,6 +103,13 @@ def main():
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     xml += "".join(f"  <url><loc>{html.escape(base + quote(path))}</loc></url>\n" for path in pages)
     xml += "</urlset>\n"
+    rammstein = json.loads((ROOT / "data" / "rammstein-discografia.json").read_text(encoding="utf-8"))
+    assert rammstein["artist"] == "Rammstein"
+    releases = rammstein["albums"]
+    assert len(releases) == 8 and len({item["title"] for item in releases}) == 8
+    assert all(isinstance(item["year"], int) and item["title"].strip() for item in releases)
+    album_page = (output / "rammstein-archivio-sonoro" / "discografia.html").read_text(encoding="utf-8")
+    assert all(html.escape(item["title"]) in album_page for item in releases), "Discography page and structured data differ"
     (output / "sitemap.xml").write_text(xml, encoding="utf-8")
     (output / "robots.txt").write_text("User-agent: *\nAllow: /\nSitemap: " + base + "sitemap.xml\n", encoding="utf-8")
     print(f"Validated {len(artists)} artist manifests and generated {len(pages)} sitemap entries")
