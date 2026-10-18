@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "editor": "Salvatore Sinatra",
+  "provider": "Spotify",
+  "embed_policy": "Player iframe is created only after an explicit visitor click.",
+  "artists": {
+    "mylene-farmer-italia": {
+      "name": "Mylène Farmer",
+      "artist_id": "0e04xgVBPU6mE2QkSHlufD",
+      "album_title": "Anamorphosée",
+      "album_id": "5eZ1UdKMt5cs4NxGQSQ2ar",
+      "verified": "Spotify artist and album pages"
+    },
+    "assemblage23-italia": {
+      "name": "Assemblage 23",
+      "artist_id": "7pwThElmrxl0pjTwXMojCx",
+      "album_title": "Addendum",
+      "album_id": "3mi6hdZtw07uAKI25DAvBF",
+      "verified": "Spotify artist and album pages"
+    },
+    "mesh-italia": {
+      "name": "Mesh",
+      "artist_id": "1uS4cYRRZRtauASIM9RxBG",
+      "album_title": "The Point at Which It Falls Apart",
+      "album_id": "4xt1VXcKCFbPCt5te333OY",
+      "verified": "Spotify artist and album pages"
+    },
+    "sandra-music-italia": {
+      "name": "Sandra",
+      "artist_id": "22wqlJYXzDBCxNc4lhGmf0",
+      "album_title": "Mirrors",
+      "album_id": "63UpDu54Jt4WGounaZcls2",
+      "verified": "Spotify artist and album pages"
+    },
+    "thebirthdaymassacre-italia": {
+      "name": "The Birthday Massacre",
+      "artist_id": "16AVsBqzmIZTNHd0eX8VbK",
+      "album_title": "Violet",
+      "album_id": "6nCedzR6IFQomTRytXZKAs",
+      "verified": "Spotify artist and album pages"
+    },
+    "ville-valo-him-heartagram-italia": {
+      "name": "HIM · Ville Valo",
+      "artist_id": "74aLweE8FHHf4yN5TWv1GM",
+      "album_title": "Razorblade Romance",
+      "album_id": "2Rsd7XBgF66mgNCWaDHpFa",
+      "verified": "Spotify artist and album pages"
+    },
+    "felix-marc-italia": {
+      "name": "Felix Marc",
+      "artist_id": "0j6w8JsaZsx5Vs3qECKnAx",
+      "album_title": "Substance",
+      "album_id": "1wp971JHIEDjGgXQudROcx",
+      "verified": "Spotify artist and album pages"
+    },
+    "chrom-italia": {
+      "name": "CHROM",
+      "artist_id": "7aTxdFpPCEm1lwap9nZzVj",
+      "album_title": "Electroscope",
+      "album_id": "0geNV9WBXJBZrMgyoErABz",
+      "verified": "Spotify artist and album pages"
+    },
+    "the-last-dance-italia": {
+      "name": "The Last Dance",
+      "artist_id": "2bVU3rr5CsO9Qh88lFGD1d",
+      "album_title": "Once Beautiful",
+      "album_id": "6LDp0FvuYvCcLJ29OnH8Wf",
+      "verified": "Spotify artist and album pages"
+    },
+    "rammstein-italia": {
+      "name": "Rammstein",
+      "artist_id": "6wWVKhxIU2cEi0K81v7HvP",
+      "album_title": "Reise, Reise",
+      "album_id": "09qHS2BgOLqi3SMkbauxdJ",
+      "verified": "Spotify artist and album pages"
+    }
+  }
+}

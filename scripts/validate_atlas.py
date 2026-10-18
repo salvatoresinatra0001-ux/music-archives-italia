@@ -27,7 +27,10 @@ def check_links(page):
         parsed = urlsplit(ref)
         if parsed.scheme or parsed.netloc or ref.startswith(("#", "mailto:", "tel:")):
             continue
-        dest = (page.parent / unquote(parsed.path)).resolve()
+        link_path = unquote(parsed.path)
+        if link_path.startswith("/music-archives-italia/"):
+            link_path = link_path.removeprefix("/music-archives-italia/")
+        dest = ((ROOT / link_path.lstrip("/")) if link_path.startswith("/") else (page.parent / link_path)).resolve()
         if not dest.is_relative_to(ROOT.resolve()):
             missing.append(f"outside repository: {ref}")
             continue
@@ -55,11 +58,18 @@ def main():
     app = (ROOT / "assets/site.js").read_text(encoding="utf-8")
     styles = (ROOT / "assets/editorial.css").read_text(encoding="utf-8")
     assert "assets/site.js" in home, "Homepage has no shared interactions"
-    assert "../assets/site.js" in (ROOT / "atlante/index.html").read_text(encoding="utf-8"), "Atlas has no shared interactions"
+    assert "/music-archives-italia/assets/site.js" in (ROOT / "atlante/index.html").read_text(encoding="utf-8"), "Atlas has no shared interactions"
     assert "mai-theme" in app and "archive-search" in app and "metaKey" in app, "Shared interactions are incomplete"
     assert 'data-theme="light"' in styles and "prefers-reduced-motion" in styles, "Theme or motion accessibility styles are missing"
     atlas = (ROOT / "atlante/index.html").read_text(encoding="utf-8")
     assert atlas.count('class="artist-card"') == ARTISTS
+    stream_data = json.loads((ROOT / "data/streaming.json").read_text(encoding="utf-8"))
+    assert len(stream_data["artists"]) == ARTISTS, "Expected one streaming profile per artist"
+    assert all((ROOT / slug / "favicon.svg").is_file() for slug in stream_data["artists"]), "Missing artist favicon"
+    for slug in stream_data["artists"]:
+        page = (ROOT / slug / "index.html").read_text(encoding="utf-8")
+        assert page.count("class=\"load-player\"") == 2, f"Expected artist and album players in {slug}"
+        assert "site.js" in page, f"Missing shared interactions in {slug}"
     workflow = (ROOT / ".github/workflows/deploy-pages.yml").read_text(encoding="utf-8")
     for dirname in [p["portal_directory"] for p in projects] + ["atlante", "data"]:
         if f"'{dirname}'" not in workflow and f"'{dirname}/**'" not in workflow:
