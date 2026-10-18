@@ -92,7 +92,10 @@ def main():
     pages.append("heartagram-italia/index.html")
     pages.extend(["atlante/index.html", "felix-marc-italia/index.html",
                   "chrom-italia/index.html", "the-last-dance-italia/index.html",
-                  "rammstein-italia/index.html",\n                  "rammstein-archivio-sonoro/index.html",\n                  "rammstein-archivio-sonoro/discografia.html",\n                  "rammstein-archivio-sonoro/fonti.html",
+                  "rammstein-italia/index.html",
+                  "rammstein-archivio-sonoro/index.html",
+                  "rammstein-archivio-sonoro/discografia.html",
+                  "rammstein-archivio-sonoro/fonti.html",
                   "felix-marc-italia/discografia-e-streaming.html",
                   "chrom-italia/discografia-e-streaming.html",
                   "the-last-dance-italia/discografia-e-streaming.html"])
