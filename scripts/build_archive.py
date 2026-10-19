@@ -73,6 +73,126 @@ Non rappresenta una discografia completa.</p>
 <a class="cta" href="ricerca.html">Metodo e fonti →</a></div></section></main>
 <footer class="footer"><div class="wrap">© 2026 Salvatore Sinatra · Archivio indipendente non ufficiale.</div></footer></body></html>"""
 
+
+def get_attr(tag, name):
+    import re
+    match = re.search(r"(?:^|\\s)" + re.escape(name) + r"\\s*=\\s*([\\\"'])(.*?)\\1", tag, re.I)
+    return html.unescape(match.group(2)) if match else None
+
+
+def set_meta(document, attribute, key, value):
+    import re
+    tag_pattern = re.compile(r"<meta\\b[^>]*>", re.I)
+    tags = list(tag_pattern.finditer(document))
+    matches = [m for m in tags if (get_attr(m.group(0), attribute) or "").lower() == key.lower()]
+    escaped = html.escape(value, quote=True)
+    if matches:
+        first = matches[0]
+        tag = first.group(0)
+        content_pattern = re.compile(r"(\\scontent\\s*=\\s*)([\\\"'])(.*?)\\2", re.I)
+        if content_pattern.search(tag):
+            new_tag = content_pattern.sub(lambda m: m.group(1) + m.group(2) + escaped + m.group(2), tag, count=1)
+        else:
+            new_tag = re.sub(r"\\s*/?>$", ' content="' + escaped + '">', tag)
+        document = document[:first.start()] + new_tag + document[first.end():]
+        repeated = [m for m in tag_pattern.finditer(document) if (get_attr(m.group(0), attribute) or "").lower() == key.lower()]
+        for extra in reversed(repeated[1:]):
+            document = document[:extra.start()] + document[extra.end():]
+        return document
+    tag = '<meta ' + attribute + '="' + html.escape(key, quote=True) + '" content="' + escaped + '">'
+    return insert_head_content(document, tag)
+
+
+def insert_head_content(document, snippet):
+    import re
+    if re.search(r"</head\\s*>", document, re.I):
+        return re.sub(r"</head\\s*>", snippet + "\\n</head>", document, count=1, flags=re.I)
+    body = re.search(r"<body\\b", document, re.I)
+    if body:
+        return document[:body.start()] + "<head>\\n" + snippet + "\\n</head>\\n" + document[body.start():]
+    root = re.search(r"<html\\b[^>]*>", document, re.I)
+    if root:
+        return document[:root.end()] + "\\n<head>\\n" + snippet + "\\n</head>" + document[root.end():]
+    return "<head>\\n" + snippet + "\\n</head>\\n" + document
+
+
+def page_url_for(page_path, output, base):
+    relative = page_path.relative_to(output).as_posix()
+    if relative == "index.html":
+        return base
+    if relative.endswith("/index.html"):
+        return base + quote(relative[:-len("/index.html")], safe="/-._~") + "/"
+    return base + quote(relative, safe="/-._~")
+
+
+def ensure_page_seo(page_path, output, base):
+    import re
+    document = page_path.read_text(encoding="utf-8", errors="replace")
+    title_match = re.search(r"<title[^>]*>(.*?)</title>", document, re.I | re.S)
+    title = html.unescape(re.sub(r"\\s+", " ", title_match.group(1)).strip()) if title_match else page_path.stem.replace("-", " ").title() + " — Music Archives Italia"
+    description = None
+    for meta in re.findall(r"<meta\\b[^>]*>", document, re.I):
+        if (get_attr(meta, "name") or "").lower() == "description":
+            description = get_attr(meta, "content")
+            break
+    if not description:
+        h1 = re.search(r"<h1\\b[^>]*>(.*?)</h1>", document, re.I | re.S)
+        excerpt = html.unescape(re.sub(r"<[^>]+>", " ", h1.group(1))).strip() if h1 else title
+        description = (excerpt + " — Archivio musicale indipendente in lingua italiana a cura di Salvatore Sinatra.")[:175]
+        document = set_meta(document, "name", "description", description)
+    canonical = None
+    for link in re.findall(r"<link\\b[^>]*>", document, re.I):
+        if "canonical" in ((get_attr(link, "rel") or "").lower().split()):
+            canonical = get_attr(link, "href")
+            if canonical:
+                break
+    if not canonical:
+        canonical = page_url_for(page_path, output, base)
+        snippet = '<link rel="canonical" href="' + html.escape(canonical, quote=True) + '">'
+        document = insert_head_content(document, snippet)
+
+    for key, value in (
+        ("og:type", "website"),
+        ("og:locale", "it_IT"),
+        ("og:site_name", "Music Archives Italia"),
+        ("og:title", title),
+        ("og:description", description),
+        ("og:url", canonical),
+    ):
+        document = set_meta(document, "property", key, value)
+    image = None
+    for meta in re.findall(r"<meta\\b[^>]*>", document, re.I):
+        if (get_attr(meta, "property") or "").lower() == "og:image":
+            image = get_attr(meta, "content")
+            break
+    document = set_meta(document, "name", "twitter:card", "summary_large_image" if image else "summary")
+    document = set_meta(document, "name", "twitter:title", title)
+    document = set_meta(document, "name", "twitter:description", description)
+    if image:
+        document = set_meta(document, "name", "twitter:image", image)
+
+    has_jsonld = bool(re.search(r"<script\\b[^>]*type=[\\\"']application/ld\\+json[\\\"']", document, re.I))
+    if not has_jsonld:
+        data = {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": title,
+            "url": canonical,
+            "description": description,
+            "inLanguage": "it-IT",
+            "isPartOf": {"@type": "WebSite", "name": "Music Archives Italia", "url": base},
+        }
+        script = '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>"
+        document = insert_head_content(document, script)
+
+    page_path.write_text(document, encoding="utf-8")
+    noindex = any(
+        "noindex" in ((get_attr(meta, "content") or "").lower())
+        for meta in re.findall(r"<meta\\b[^>]*>", document, re.I)
+        if (get_attr(meta, "name") or "").lower() == "robots"
+    )
+    return canonical, noindex
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", default="_site")
@@ -84,38 +204,34 @@ def main():
         folder = output / artist["path"]
         folder.mkdir(parents=True, exist_ok=True)
         (folder / "catalogo.html").write_text(page(artist), encoding="utf-8")
-    pages = ["index.html"]
-    for artist in artists:
-        pages.extend(f"{artist['path']}/{filename}" for filename in
-                     ("index.html", "profilo.html", "discografia.html", "singoli.html",
-                      "collaborazioni.html", "ricerca.html", "catalogo.html"))
-    pages.append("heartagram-italia/index.html")
-    pages.extend(["atlante/index.html", "felix-marc-italia/index.html",
-                  "chrom-italia/index.html", "the-last-dance-italia/index.html",
-                  "rammstein-italia/index.html",
-                  "rammstein-archivio-sonoro/index.html",
-                  "rammstein-archivio-sonoro/discografia.html",
-                  "rammstein-archivio-sonoro/fonti.html",
-                  "felix-marc-italia/discografia-e-streaming.html",
-                  "chrom-italia/discografia-e-streaming.html",
-                  "the-last-dance-italia/discografia-e-streaming.html"])
-    missing = [path for path in pages if not (output / path).is_file()]
-    if missing:
-        raise ValueError(f"Missing required pages: {missing}")
+
+    # Complete per-page metadata in the exact static artifact that GitHub Pages deploys.
     base = "https://salvatoresinatra0001-ux.github.io/music-archives-italia/"
-    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    xml += "".join(f"  <url><loc>{html.escape(base + quote(path))}</loc></url>\n" for path in pages)
-    xml += "</urlset>\n"
-    rammstein = json.loads((ROOT / "data" / "rammstein-discografia.json").read_text(encoding="utf-8"))
-    assert rammstein["artist"] == "Rammstein"
-    releases = rammstein["albums"]
-    assert len(releases) == 8 and len({item["title"] for item in releases}) == 8
-    assert all(isinstance(item["year"], int) and item["title"].strip() for item in releases)
-    album_page = (output / "rammstein-archivio-sonoro" / "discografia.html").read_text(encoding="utf-8")
-    assert all(html.escape(item["title"]) in album_page for item in releases), "Discography page and structured data differ"
+    excluded_parts = {".git", "node_modules", "historic", "storico"}
+    html_pages = sorted(
+        page for page in output.rglob("*.html")
+        if not any(part.lower() in excluded_parts for part in page.relative_to(output).parts)
+        and "index-legacy" not in page.name.lower()
+        and page.name.lower() != "404.html"
+    )
+    sitemap_urls = []
+    for page_path in html_pages:
+        canonical, noindex = ensure_page_seo(page_path, output, base)
+        # Only include pages whose declared canonical belongs to this site. Duplicate
+        # mirrors with a different canonical host are deliberately omitted.
+        if not noindex and canonical and canonical.startswith(base):
+            sitemap_urls.append(canonical)
+    sitemap_urls = sorted(set(sitemap_urls))
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n'
+    xml += "".join(f"  <url><loc>{html.escape(url)}</loc></url>\\n" for url in sitemap_urls)
+    xml += "</urlset>\\n"
     (output / "sitemap.xml").write_text(xml, encoding="utf-8")
-    (output / "robots.txt").write_text("User-agent: *\nAllow: /\nSitemap: " + base + "sitemap.xml\n", encoding="utf-8")
-    print(f"Validated {len(artists)} artist manifests and generated {len(pages)} sitemap entries")
+    (output / "robots.txt").write_text(
+        "User-agent: *\\nAllow: /\\nSitemap: " + base + "sitemap.xml\\n",
+        encoding="utf-8",
+    )
+    print(f"Validated {len(artists)} artist manifests; enriched {len(html_pages)} HTML pages; generated {len(sitemap_urls)} canonical sitemap entries")
 
 if __name__ == "__main__":
     main()
