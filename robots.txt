@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://salvatoresinatra0001-ux.github.io/music-archives-italia/sitemap.xml
