@@ -221,6 +221,21 @@ def main():
         # mirrors with a different canonical host are deliberately omitted.
         if not noindex and canonical and canonical.startswith(base):
             sitemap_urls.append(canonical)
+    # Every published page uses the same clean, ornament-free masthead.
+    # Inject after the metadata pass so legacy and generated pages are covered.
+    import re
+    cleanup_tag = '<link rel="stylesheet" href="/music-archives-italia/assets/header-clean.css?v=20261027">'
+    clean_pages = 0
+    for published_page in sorted(output.rglob("*.html")):
+        markup = published_page.read_text(encoding="utf-8", errors="replace")
+        if "header-clean.css" in markup:
+            continue
+        closing_head = re.search(r"</head\s*>", markup, re.I)
+        if closing_head is None:
+            raise ValueError(f"Cannot apply universal header styling: {published_page}")
+        markup = markup[:closing_head.start()] + cleanup_tag + "\n" + markup[closing_head.start():]
+        published_page.write_text(markup, encoding="utf-8")
+        clean_pages += 1
     sitemap_urls = sorted(set(sitemap_urls))
     xml = '<?xml version="1.0" encoding="UTF-8"?>\\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n'
@@ -231,7 +246,7 @@ def main():
         "User-agent: *\\nAllow: /\\nSitemap: " + base + "sitemap.xml\\n",
         encoding="utf-8",
     )
-    print(f"Validated {len(artists)} artist manifests; enriched {len(html_pages)} HTML pages; generated {len(sitemap_urls)} canonical sitemap entries")
+    print(f"Validated {len(artists)} artists; enriched {len(html_pages)} HTML pages; applied clean header on {clean_pages} pages; sitemap: {len(sitemap_urls)} URLs")
 
 if __name__ == "__main__":
     main()
