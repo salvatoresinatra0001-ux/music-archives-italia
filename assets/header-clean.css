@@ -1,0 +1,58 @@
+/*
+ * Music Archives Italia — universal clean masthead.
+ * Loaded after local page styles on every deployed HTML page.
+ * Removes decorative overlays and gradients; preserves headings, navigation,
+ * photographs, content labels and the accessibility focus indicator.
+ */
+header,
+header.top,
+header.bar,
+.site-header,
+header .nav,
+header nav {
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+header::before,
+header::after,
+header .nav::before,
+header .nav::after,
+header nav::before,
+header nav::after,
+.hero::before,
+.hero::after,
+.hero-inner::before,
+.hero-inner::after {
+  content: none !important;
+  display: none !important;
+}
+
+header .mai-header-kicker,
+header .brand-icon,
+header .header-ornament,
+header .masthead-ornament,
+.hero .red-rule,
+.hero .decorative-rule,
+.hero .hero-ornament {
+  display: none !important;
+}
+
+/* Consistent flat upper area: no radial/diagonal colour decoration. */
+html body,
+.hero,
+.hero-inner {
+  background-image: none !important;
+}
+
+header,
+header .nav {
+  filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  header, .hero, .hero-inner { animation: none !important; }
+}
