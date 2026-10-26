@@ -1,0 +1,84 @@
+/* Music Archives Italia — editorial home v21, independent stylesheet. */
+:root { color-scheme: dark; --bg:#0a0a0a; --paper:#0a0a0a; --text:#f0eee9; --sub:#a29f9a; --muted:#77746f; --line:#32302d; --max:1392px; }
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.55}
+a{color:inherit} a:focus-visible,summary:focus-visible{outline:2px solid #fff;outline-offset:5px}
+::selection{background:#e2ddd2;color:#0a0a0a}
+.container{width:min(var(--max),calc(100% - 100px));margin-inline:auto}
+.skip{position:absolute;top:-100px;left:24px;z-index:50;padding:13px 18px;background:#fff;color:#000}
+.skip:focus{top:16px}
+.site-header{border-bottom:1px solid var(--line)}
+.head-inner{height:93px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.wordmark{text-decoration:none;display:inline-flex;align-items:center;gap:17px;font-weight:600;font-size:11px;letter-spacing:.19em;line-height:1.38;white-space:nowrap}
+.wordmark strong{font-weight:500;letter-spacing:.46em}
+.brand-icon{width:47px;height:47px;display:grid;place-items:center;position:relative;border:1px solid #c6c2ba;font-size:14px;letter-spacing:-.13em;padding-right:3px}
+.brand-icon span{padding:0 3px;color:#aaa49b}
+.site-header nav{display:flex;gap:clamp(20px,4vw,55px);align-items:center}
+.site-header nav a{text-decoration:none;color:#c4c0b9;font-size:11px;letter-spacing:.14em;text-transform:uppercase;transition:color .22s}
+.site-header nav a:hover,.underlink:hover{color:#fff}
+.hero{padding-top:70px}
+.hero-topline,.hero-bottom{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.overline,.hero-year,.hero-bottom,.catalog-end{color:#b5b0a8;letter-spacing:.19em;font-size:10px;font-weight:500;text-transform:uppercase}
+.hero-year{color:#74716c}
+.hero-layout{min-height:405px;display:grid;grid-template-columns:1.65fr .65fr;align-items:end;gap:70px;padding:60px 0 77px}
+h1,h2,h3,p{margin-top:0}
+.hero h1{margin-bottom:0;font-family:"Iowan Old Style","Baskerville","Times New Roman",Georgia,serif;font-weight:400;font-size:clamp(64px,7.6vw,129px);line-height:.99;letter-spacing:-.065em}
+.hero h1 em,.about h2 em{font-weight:400;color:#8b8882}
+.hero-aside{padding-bottom:9px;max-width:340px}
+.hero-aside p{color:#c0bcb5;font-size:17px;line-height:1.7;margin-bottom:36px;font-weight:350}
+.underlink{display:inline-flex;gap:19px;align-items:center;text-decoration:none;font-size:11px;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid #96918b;padding-bottom:10px;transition:color .2s,border-color .2s}
+.underlink span{font-size:17px;line-height:1;letter-spacing:0}
+.hero-bottom{border-top:1px solid var(--line);border-bottom:1px solid var(--line);height:66px}
+.catalogue{padding-top:85px;padding-bottom:120px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:41px}
+.section-head .overline{margin:0 0 13px}
+.section-head h2{font:400 clamp(48px,5.2vw,78px)/1.08 "Iowan Old Style",Baskerville,Georgia,serif;letter-spacing:-.045em;margin:0}
+.section-head>p{color:var(--sub);font-size:12px;text-align:right;line-height:1.7;margin:0 0 6px}
+.archive-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:23px;row-gap:62px}
+.archive{min-width:0;display:block;text-decoration:none}
+.archive-visual{position:relative;aspect-ratio:1.34;overflow:hidden;background:#202020;isolation:isolate}
+.archive-visual::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.25),transparent 38%);z-index:1;pointer-events:none}
+.archive-visual img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(100%) brightness(.82) contrast(1.07);transform:scale(1.002);transition:filter .55s ease,transform .65s cubic-bezier(.2,.7,.2,1)}
+.archive:hover .archive-visual img,.archive:focus-visible .archive-visual img{filter:grayscale(58%) brightness(.99) contrast(1.02);transform:scale(1.045)}
+.archive-visual .visual-counter{position:absolute;z-index:2;left:23px;top:22px;background:rgba(10,10,10,.54);border:1px solid #ffffff55;padding:6px 10px;font-size:10px;letter-spacing:.19em;font-variant-numeric:tabular-nums;color:white}
+.archive-meta{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-top:20px;border-top:1px solid #55514a;margin-top:19px}
+.archive-meta h3{font:400 clamp(22px,2.05vw,33px)/1.17 "Iowan Old Style","Baskerville",Georgia,serif;letter-spacing:-.018em;margin:0 0 9px}
+.archive-meta p{margin:0;color:#97928a;font-size:11px;letter-spacing:.105em;text-transform:uppercase;line-height:1.5}
+.archive-arrow{font-size:24px;line-height:1;color:#a7a29a;transition:transform .2s,color .2s}
+.archive:hover .archive-arrow{color:#fff;transform:translate(3px,-3px)}
+.archive-empty{background:radial-gradient(ellipse at 80% 12%,#34312f,#181716 57%,#0b0b0b);border:1px solid #302f2e}
+.pending-art{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:24px;color:#77736e}
+.pending-art>span{font:400 clamp(29px,3.2vw,48px)/.98 "Iowan Old Style",Georgia,serif;letter-spacing:-.05em}
+.pending-art small{font-size:9px;letter-spacing:.22em}
+.archive-visual.image-error img{display:none}
+.archive-visual.image-error::after{content:"IMMAGINE TEMPORANEAMENTE NON DISPONIBILE";position:absolute;left:22px;right:22px;top:50%;transform:translateY(-50%);color:#99938b;text-align:center;font-size:10px;letter-spacing:.19em}
+.catalog-end{border-top:1px solid var(--line);margin-top:90px;padding-top:32px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.catalog-end .underlink{font-size:10px}
+.about{border-top:1px solid var(--line);background:#111110;padding:110px 0 115px}
+.about-layout{display:grid;grid-template-columns:1fr 2.05fr;gap:30px}
+.about h2{font:400 clamp(34px,4.2vw,64px)/1.13 "Iowan Old Style",Georgia,serif;letter-spacing:-.04em;margin-bottom:30px}
+.about h2 em{display:inline-block}
+.about-layout>div p{color:#a9a59e;max-width:650px;font-size:15px;line-height:1.85;margin-bottom:25px}
+.about-layout strong{color:#ddd9d2;font-weight:500}
+.credits{padding-top:24px;padding-bottom:58px}
+.credits details{border-bottom:1px solid var(--line)}
+.credits summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:28px 0;font-size:12px;letter-spacing:.13em;text-transform:uppercase}
+.credits summary::-webkit-details-marker{display:none}
+.details-open{color:#817e78;font-size:10px}
+.details-open span{font-size:16px;margin-left:10px}
+.credits details[open] .details-open span{display:inline-block;transform:rotate(45deg)}
+.credit-note{font-size:12px;color:#a7a39d;line-height:1.8;max-width:780px;margin:2px 0 24px}
+.credit-list{margin:0 0 30px;padding:0;list-style:none}
+.credit-list li{display:grid;grid-template-columns:1fr 2fr;gap:20px;padding:12px 0;border-top:1px solid #262624;font-size:12px;color:#a8a39c}
+.credit-list li>span:first-child{color:#ddd9d3}
+.credit-list a{text-decoration:underline;text-decoration-color:#595652;text-underline-offset:3px}
+.footer{border-top:1px solid var(--line)}
+.footer-inner{padding-top:36px;padding-bottom:45px;display:flex;align-items:start;justify-content:space-between;gap:30px}
+.footer-brand{font-weight:600;letter-spacing:.18em;font-size:11px}
+.footer p{font-size:11px;color:#807c76;margin:10px 0 0}
+.footer .underlink{font-size:10px}
+@media(max-width:1100px){.container{width:calc(100% - 64px)}.hero-layout{grid-template-columns:1.35fr .65fr;gap:45px;min-height:380px}.hero h1{font-size:clamp(63px,7.4vw,100px)}.archive-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:48px 20px}.archive-visual{aspect-ratio:1.43}}
+@media(max-width:700px){.container{width:calc(100% - 38px)}.head-inner{height:auto;min-height:77px;padding-block:15px;flex-wrap:wrap}.brand-icon{width:40px;height:40px}.wordmark{font-size:10px;gap:12px}.site-header nav{gap:17px}.site-header nav a{font-size:10px}.hero{padding-top:42px}.hero-topline{align-items:start}.hero-year{display:none}.hero-layout{display:block;min-height:0;padding:56px 0 48px}.hero h1{font-size:clamp(58px,11.6vw,87px);letter-spacing:-.055em}.hero-aside{margin-top:37px;padding-bottom:0}.hero-aside p{font-size:15px;margin-bottom:22px}.hero-bottom{height:55px}.catalogue{padding-block:70px 85px}.section-head{margin-bottom:31px}.section-head>p{display:none}.section-head h2{font-size:54px}.archive-grid{grid-template-columns:1fr;row-gap:49px}.archive-visual{aspect-ratio:1.38}.archive-meta h3{font-size:30px}.catalog-end{display:block;margin-top:65px}.catalog-end .underlink{margin-top:25px}.about{padding:72px 0 77px}.about-layout{display:block}.about-layout>.overline{margin-bottom:33px}.about h2{font-size:41px}.about-layout>div p{font-size:14px}.credits summary{font-size:11px}.details-open{font-size:0}.details-open span{font-size:18px}.credit-list li{display:block}.credit-list li>span{display:block;padding-bottom:5px}.footer-inner{display:block}.footer .underlink{margin-top:23px}}
+@media(max-width:385px){.site-header nav{width:100%;justify-content:space-between}.hero h1{font-size:53px}.overline{font-size:9px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
