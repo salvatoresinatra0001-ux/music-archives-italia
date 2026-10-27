@@ -8,7 +8,7 @@ a{color:inherit} a:focus-visible,summary:focus-visible{outline:2px solid #fff;ou
 .container{width:min(var(--max),calc(100% - 100px));margin-inline:auto}
 .skip{position:absolute;top:-100px;left:24px;z-index:50;padding:13px 18px;background:#fff;color:#000}
 .skip:focus{top:16px}
-.site-header{border-bottom:1px solid var(--line)}
+.site-header{border:0}
 .head-inner{height:93px;display:flex;align-items:center;justify-content:space-between;gap:24px}
 .wordmark{text-decoration:none;display:inline-flex;align-items:center;gap:17px;font-weight:600;font-size:11px;letter-spacing:.19em;line-height:1.38;white-space:nowrap}
 .wordmark strong{font-weight:500;letter-spacing:.46em}
@@ -29,7 +29,7 @@ h1,h2,h3,p{margin-top:0}
 .hero-aside p{color:#c0bcb5;font-size:17px;line-height:1.7;margin-bottom:36px;font-weight:350}
 .underlink{display:inline-flex;gap:19px;align-items:center;text-decoration:none;font-size:11px;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid #96918b;padding-bottom:10px;transition:color .2s,border-color .2s}
 .underlink span{font-size:17px;line-height:1;letter-spacing:0}
-.hero-bottom{border-top:1px solid var(--line);border-bottom:1px solid var(--line);height:66px}
+.hero-bottom{border:0;height:66px}
 .catalogue{padding-top:85px;padding-bottom:120px}
 .section-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:41px}
 .section-head .overline{margin:0 0 13px}
@@ -53,9 +53,9 @@ h1,h2,h3,p{margin-top:0}
 .pending-art small{font-size:9px;letter-spacing:.22em}
 .archive-visual.image-error img{display:none}
 .archive-visual.image-error::after{content:"IMMAGINE TEMPORANEAMENTE NON DISPONIBILE";position:absolute;left:22px;right:22px;top:50%;transform:translateY(-50%);color:#99938b;text-align:center;font-size:10px;letter-spacing:.19em}
-.catalog-end{border-top:1px solid var(--line);margin-top:90px;padding-top:32px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.catalog-end{border-top:0;margin-top:90px;padding-top:32px;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .catalog-end .underlink{font-size:10px}
-.about{border-top:1px solid var(--line);background:#111110;padding:110px 0 115px}
+.about{border-top:0;background:#111110;padding:110px 0 115px}
 .about-layout{display:grid;grid-template-columns:1fr 2.05fr;gap:30px}
 .about h2{font:400 clamp(34px,4.2vw,64px)/1.13 "Iowan Old Style",Georgia,serif;letter-spacing:-.04em;margin-bottom:30px}
 .about h2 em{display:inline-block}
