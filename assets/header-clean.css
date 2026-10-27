@@ -1,58 +1,90 @@
-/*
- * Music Archives Italia — universal clean masthead.
- * Loaded after local page styles on every deployed HTML page.
- * Removes decorative overlays and gradients; preserves headings, navigation,
- * photographs, content labels and the accessibility focus indicator.
- */
-header,
-header.top,
-header.bar,
-.site-header,
-header .nav,
-header nav {
-  background-image: none !important;
+/* Music Archives Italia — masthead and upper-page frame removal v2.
+   Stable source asset, injected into ALL output pages by build_archive.py.
+   Deliberately preserve titles, links, images and keyboard focus outlines.
+*/
+html body header,
+html body header.top,
+html body header.bar,
+html body header.site-header,
+html body header.mai-masthead,
+html body .site-header,
+html body .top,
+html body .bar,
+html body .hero,
+html body .hero-inner,
+html body .hero-layout,
+html body .hero-topline,
+html body .hero-bottom,
+html body .statline,
+html body .masthead,
+html body .archive-hero-photo,
+html body .archive-hero-photo a,
+html body .archive-hero-photo img {
+  border: 0 !important;
+  border-width: 0 !important;
+  outline: 0 !important;
   box-shadow: none !important;
+  background-image: none !important;
   text-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-header::before,
-header::after,
-header .nav::before,
-header .nav::after,
-header nav::before,
-header nav::after,
-.hero::before,
-.hero::after,
-.hero-inner::before,
-.hero-inner::after {
+/* Remove horizontal rules previously used as a decorative upper frame.
+   Sections are separated by whitespace; actual content cards retain structure. */
+html body main > section,
+html body .section,
+html body section.section,
+html body .about,
+html body .catalogue,
+html body .catalog-end {
+  border-top: 0 !important;
+}
+
+/* Remove artificial perimeter drawn through pseudo-elements. */
+html body header::before,
+html body header::after,
+html body header .nav::before,
+html body header .nav::after,
+html body header nav::before,
+html body header nav::after,
+html body .hero::before,
+html body .hero::after,
+html body .hero-inner::before,
+html body .hero-inner::after,
+html body .hero-layout::before,
+html body .hero-layout::after,
+html body .artist-card::before {
   content: none !important;
   display: none !important;
 }
 
-header .mai-header-kicker,
-header .brand-icon,
-header .header-ornament,
-header .masthead-ornament,
-.hero .red-rule,
-.hero .decorative-rule,
-.hero .hero-ornament {
+/* Remove ornamental captions, monograms and accent rulers, not titles. */
+html body header .mai-header-kicker,
+html body header .brand-icon,
+html body header .header-ornament,
+html body header .masthead-ornament,
+html body .hero .red-rule,
+html body .hero .decorative-rule,
+html body .hero .hero-ornament {
   display: none !important;
 }
 
-/* Consistent flat upper area: no radial/diagonal colour decoration. */
-html body,
-.hero,
-.hero-inner {
-  background-image: none !important;
-}
-
-header,
-header .nav {
+html body header,
+html body header .nav,
+html body header nav {
   filter: none !important;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  header, .hero, .hero-inner { animation: none !important; }
+/* Preserve visible focus outlines on interactive controls. */
+html body a:focus-visible,
+html body button:focus-visible,
+html body input:focus-visible,
+html body summary:focus-visible {
+  outline: 2px solid currentColor !important;
+  outline-offset: 4px !important;
+}
+
+@media(prefers-reduced-motion:reduce) {
+  html body header, html body .hero, html body .hero-inner { animation: none !important; }
 }
