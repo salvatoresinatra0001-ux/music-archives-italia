@@ -224,7 +224,7 @@ def main():
     # Every published page uses the same clean, ornament-free masthead.
     # Inject after the metadata pass so legacy and generated pages are covered.
     import re
-    cleanup_tag = '<link rel="stylesheet" href="/music-archives-italia/assets/header-clean.css?v=20261027">'
+    cleanup_tag = '<link rel="stylesheet" href="/music-archives-italia/assets/header-clean.css?v=20261027-no-frame-v2">'
     clean_pages = 0
     for published_page in sorted(output.rglob("*.html")):
         markup = published_page.read_text(encoding="utf-8", errors="replace")
