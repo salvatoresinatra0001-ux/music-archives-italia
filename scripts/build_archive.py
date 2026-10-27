@@ -76,44 +76,59 @@ Non rappresenta una discografia completa.</p>
 
 def get_attr(tag, name):
     import re
-    match = re.search(r"(?:^|\\s)" + re.escape(name) + r"\\s*=\\s*([\\\"'])(.*?)\\1", tag, re.I)
+    pattern = r"""(?:^|\s)""" + re.escape(name) + r"""\s*=\s*(["'])(.*?)\1"""
+    match = re.search(pattern, tag, re.I | re.S)
     return html.unescape(match.group(2)) if match else None
+
+
+def insert_head_content(document, snippet):
+    """Insert metadata inside the existing head; never prepend pseudo-heads."""
+    import re
+    closing = re.search(r"</head\s*>", document, re.I)
+    if closing:
+        return document[:closing.start()] + snippet + "\n" + document[closing.start():]
+    body = re.search(r"<body\b", document, re.I)
+    if body:
+        return document[:body.start()] + "<head>\n" + snippet + "\n</head>\n" + document[body.start():]
+    root = re.search(r"<html\b[^>]*>", document, re.I)
+    if root:
+        return document[:root.end()] + "\n<head>\n" + snippet + "\n</head>\n" + document[root.end():]
+    raise ValueError("Cannot insert metadata: document has no HTML root or body")
 
 
 def set_meta(document, attribute, key, value):
     import re
-    tag_pattern = re.compile(r"<meta\\b[^>]*>", re.I)
-    tags = list(tag_pattern.finditer(document))
-    matches = [m for m in tags if (get_attr(m.group(0), attribute) or "").lower() == key.lower()]
+    pattern = re.compile(r"<meta\b[^>]*>", re.I)
     escaped = html.escape(value, quote=True)
-    if matches:
-        first = matches[0]
-        tag = first.group(0)
-        content_pattern = re.compile(r"(\\scontent\\s*=\\s*)([\\\"'])(.*?)\\2", re.I)
-        if content_pattern.search(tag):
-            new_tag = content_pattern.sub(lambda m: m.group(1) + m.group(2) + escaped + m.group(2), tag, count=1)
-        else:
-            new_tag = re.sub(r"\\s*/?>$", ' content="' + escaped + '">', tag)
-        document = document[:first.start()] + new_tag + document[first.end():]
-        repeated = [m for m in tag_pattern.finditer(document) if (get_attr(m.group(0), attribute) or "").lower() == key.lower()]
-        for extra in reversed(repeated[1:]):
-            document = document[:extra.start()] + document[extra.end():]
-        return document
-    tag = '<meta ' + attribute + '="' + html.escape(key, quote=True) + '" content="' + escaped + '">'
-    return insert_head_content(document, tag)
+    matches = [
+        match for match in pattern.finditer(document)
+        if (get_attr(match.group(0), attribute) or "").casefold() == key.casefold()
+    ]
+    if not matches:
+        tag = f'<meta {attribute}="{html.escape(key, quote=True)}" content="{escaped}">'
+        return insert_head_content(document, tag)
 
+    first = matches[0]
+    tag = first.group(0)
+    content_pattern = re.compile(r"""(\scontent\s*=\s*)(["'])(.*?)\2""", re.I | re.S)
+    if content_pattern.search(tag):
+        edited_tag = content_pattern.sub(
+            lambda match: match.group(1) + match.group(2) + escaped + match.group(2),
+            tag,
+            count=1,
+        )
+    else:
+        edited_tag = re.sub(r"\s*/?>$", ' content="' + escaped + '">', tag)
+    document = document[:first.start()] + edited_tag + document[first.end():]
 
-def insert_head_content(document, snippet):
-    import re
-    if re.search(r"</head\\s*>", document, re.I):
-        return re.sub(r"</head\\s*>", snippet + "\\n</head>", document, count=1, flags=re.I)
-    body = re.search(r"<body\\b", document, re.I)
-    if body:
-        return document[:body.start()] + "<head>\\n" + snippet + "\\n</head>\\n" + document[body.start():]
-    root = re.search(r"<html\\b[^>]*>", document, re.I)
-    if root:
-        return document[:root.end()] + "\\n<head>\\n" + snippet + "\\n</head>" + document[root.end():]
-    return "<head>\\n" + snippet + "\\n</head>\\n" + document
+    # Deduplicate pre-existing repeated metadata without disturbing markup.
+    duplicates = [
+        match for match in pattern.finditer(document)
+        if (get_attr(match.group(0), attribute) or "").casefold() == key.casefold()
+    ]
+    for extra in reversed(duplicates[1:]):
+        document = document[:extra.start()] + document[extra.end():]
+    return document
 
 
 def page_url_for(page_path, output, base):
@@ -129,27 +144,35 @@ def ensure_page_seo(page_path, output, base):
     import re
     document = page_path.read_text(encoding="utf-8", errors="replace")
     title_match = re.search(r"<title[^>]*>(.*?)</title>", document, re.I | re.S)
-    title = html.unescape(re.sub(r"\\s+", " ", title_match.group(1)).strip()) if title_match else page_path.stem.replace("-", " ").title() + " — Music Archives Italia"
+    title = (
+        html.unescape(re.sub(r"\s+", " ", title_match.group(1)).strip())
+        if title_match
+        else page_path.stem.replace("-", " ").title() + " — Music Archives Italia"
+    )
+
     description = None
-    for meta in re.findall(r"<meta\\b[^>]*>", document, re.I):
-        if (get_attr(meta, "name") or "").lower() == "description":
+    for meta in re.findall(r"<meta\b[^>]*>", document, re.I):
+        if (get_attr(meta, "name") or "").casefold() == "description":
             description = get_attr(meta, "content")
             break
     if not description:
-        h1 = re.search(r"<h1\\b[^>]*>(.*?)</h1>", document, re.I | re.S)
+        h1 = re.search(r"<h1\b[^>]*>(.*?)</h1>", document, re.I | re.S)
         excerpt = html.unescape(re.sub(r"<[^>]+>", " ", h1.group(1))).strip() if h1 else title
         description = (excerpt + " — Archivio musicale indipendente in lingua italiana a cura di Salvatore Sinatra.")[:175]
         document = set_meta(document, "name", "description", description)
+
     canonical = None
-    for link in re.findall(r"<link\\b[^>]*>", document, re.I):
+    for link in re.findall(r"<link\b[^>]*>", document, re.I):
         if "canonical" in ((get_attr(link, "rel") or "").lower().split()):
             canonical = get_attr(link, "href")
             if canonical:
                 break
     if not canonical:
         canonical = page_url_for(page_path, output, base)
-        snippet = '<link rel="canonical" href="' + html.escape(canonical, quote=True) + '">'
-        document = insert_head_content(document, snippet)
+        document = insert_head_content(
+            document,
+            '<link rel="canonical" href="' + html.escape(canonical, quote=True) + '">',
+        )
 
     for key, value in (
         ("og:type", "website"),
@@ -160,18 +183,22 @@ def ensure_page_seo(page_path, output, base):
         ("og:url", canonical),
     ):
         document = set_meta(document, "property", key, value)
+
     image = None
-    for meta in re.findall(r"<meta\\b[^>]*>", document, re.I):
-        if (get_attr(meta, "property") or "").lower() == "og:image":
+    for meta in re.findall(r"<meta\b[^>]*>", document, re.I):
+        if (get_attr(meta, "property") or "").casefold() == "og:image":
             image = get_attr(meta, "content")
             break
+
     document = set_meta(document, "name", "twitter:card", "summary_large_image" if image else "summary")
     document = set_meta(document, "name", "twitter:title", title)
     document = set_meta(document, "name", "twitter:description", description)
     if image:
         document = set_meta(document, "name", "twitter:image", image)
 
-    has_jsonld = bool(re.search(r"<script\\b[^>]*type=[\\\"']application/ld\\+json[\\\"']", document, re.I))
+    has_jsonld = bool(re.search(
+        r"""<script\b[^>]*type\s*=\s*["']application/ld\+json["']""", document, re.I
+    ))
     if not has_jsonld:
         data = {
             "@context": "https://schema.org",
@@ -182,16 +209,19 @@ def ensure_page_seo(page_path, output, base):
             "inLanguage": "it-IT",
             "isPartOf": {"@type": "WebSite", "name": "Music Archives Italia", "url": base},
         }
-        script = '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>"
+        script = '<script type="application/ld+json">' + json.dumps(
+            data, ensure_ascii=False
+        ).replace("</", "<\\/") + "</script>"
         document = insert_head_content(document, script)
 
     page_path.write_text(document, encoding="utf-8")
     noindex = any(
-        "noindex" in ((get_attr(meta, "content") or "").lower())
-        for meta in re.findall(r"<meta\\b[^>]*>", document, re.I)
-        if (get_attr(meta, "name") or "").lower() == "robots"
+        "noindex" in ((get_attr(meta, "content") or "").casefold())
+        for meta in re.findall(r"<meta\b[^>]*>", document, re.I)
+        if (get_attr(meta, "name") or "").casefold() == "robots"
     )
     return canonical, noindex
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -237,13 +267,13 @@ def main():
         published_page.write_text(markup, encoding="utf-8")
         clean_pages += 1
     sitemap_urls = sorted(set(sitemap_urls))
-    xml = '<?xml version="1.0" encoding="UTF-8"?>\\n'
-    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n'
-    xml += "".join(f"  <url><loc>{html.escape(url)}</loc></url>\\n" for url in sitemap_urls)
-    xml += "</urlset>\\n"
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    xml += "".join(f"  <url><loc>{html.escape(url)}</loc></url>\n" for url in sitemap_urls)
+    xml += "</urlset>\n"
     (output / "sitemap.xml").write_text(xml, encoding="utf-8")
     (output / "robots.txt").write_text(
-        "User-agent: *\\nAllow: /\\nSitemap: " + base + "sitemap.xml\\n",
+        "User-agent: *\nAllow: /\nSitemap: " + base + "sitemap.xml\n",
         encoding="utf-8",
     )
     print(f"Validated {len(artists)} artists; enriched {len(html_pages)} HTML pages; applied clean header on {clean_pages} pages; sitemap: {len(sitemap_urls)} URLs")
